@@ -1,4 +1,4 @@
-name: wemake-python
+name: pytest
 
 on:
   - push
