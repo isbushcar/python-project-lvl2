@@ -1,0 +1,26 @@
+name: wemake-python
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install
+        poetry build
+        make intall
+    - name: Run linter and pytest
+      run: |
+        make test
