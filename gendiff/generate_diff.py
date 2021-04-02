@@ -18,6 +18,7 @@ def generate_diff(first_file, second_file):  # noqa: WPS210
     diff.insert(0, '{')
     diff.append('}')
     print('\n'.join(diff))  # noqa: WPS421
+    return '\n'.join(diff)
 
 
 def generate_diff_string(key, status, value_one, value_two):
