@@ -25,3 +25,20 @@ jobs:
     - name: Run linter and pytest
       run: |
         make test
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@master
+      with:
+        node-version: '12'
+    - run: npm install -g yarn
+    - run: yarn install
+    - run: yarn build
+    - uses: paambaati/codeclimate-action@v2.2.4
+      env:
+        CC_TEST_REPORTER_ID: d894bef25c1779253403fccb81a201b30345069b5dea2dac37c1bd1af49cf881
+      with:
+        coverageCommand: yarn coverage
+
