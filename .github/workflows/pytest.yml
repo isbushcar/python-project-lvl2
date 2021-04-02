@@ -20,7 +20,7 @@ jobs:
         pip install poetry
         poetry install
         poetry build
-        make intall
+        make install
     - name: Run linter and pytest
       run: |
         make test
