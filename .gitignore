@@ -3,3 +3,6 @@ __pycache__/
 .idea/
 dist/
 scetchbook.py
+*/.coverage
+.coverage
+coverage.xml

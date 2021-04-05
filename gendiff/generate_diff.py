@@ -3,11 +3,13 @@
 
 import json
 
+from gendiff.parser import parse_file
+
 
 def generate_diff(first_file, second_file):  # noqa: WPS210
     """Generate diff between two files."""
-    first_file = json.load(open(first_file))  # noqa: WPS515
-    second_file = json.load(open(second_file))  # noqa: WPS515
+    first_file = parse_file(first_file)
+    second_file = parse_file(second_file)
     diff = []
     for status, keys in sort_keys(first_file, second_file).items():
         for key in keys:
