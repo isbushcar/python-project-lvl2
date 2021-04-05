@@ -1,10 +1,15 @@
+"""Parse file content."""
+
+
 import json
 
 import yaml
 
 
 def parse_file(file_name):
-    if file_name[file_name.rfind('.'):] == '.json':
-        return json.load(open(file_name))  # noqa: WPS515
-    if file_name[file_name.rfind('.'):] == '.yaml':
-        return yaml.safe_load(open(file_name))  # noqa: WPS515
+    """Parse file content depending on it's format."""
+    formats = {
+        '.json': json.load,
+        '.yaml': yaml.safe_load,
+    }
+    return formats[file_name[file_name.rfind('.'):]](open(file_name))  # noqa: WPS515, E501

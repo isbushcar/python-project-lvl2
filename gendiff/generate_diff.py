@@ -1,8 +1,6 @@
 """Generate diff between two json files."""
 
 
-import json
-
 from gendiff.parser import parse_file
 
 
