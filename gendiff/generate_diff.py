@@ -8,75 +8,80 @@ def generate_diff(first_file, second_file):
     """Generate diff between two files."""
     first_file = parse_file(first_file)
     second_file = parse_file(second_file)
-    return find_diff(first_file, second_file)
+    return stylish(find_diff(first_file, second_file))
 
 
 def find_diff(first_file, second_file, level=0):  # noqa: WPS210
     """Find difference between data in two objects."""
-    diff = []
-    for status, keys in sort_keys(first_file, second_file).items():
-        for key in keys:
-            are_both_dicts = isinstance(first_file.get(key), dict) and (
-                isinstance(second_file.get(key), dict)
-            )
-            if are_both_dicts:
-                inner_diff = find_diff(
-                    first_file.get(key),
-                    second_file.get(key),
-                    level + 1,
-                )
-                diff.append(generate_diff_lines(
-                    key,
-                    status,
-                    inner_diff,
-                    level=level,
-                ))
-            else:
-                diff.append(generate_diff_lines(
-                    key,
-                    status,
-                    first_file.get(key),
-                    second_file.get(key),
-                    level=level,
-                ))
-    diff.sort(key=strip_string_to_sort)
-    diff.insert(0, '{')
-    diff.append('    ' * level + '}')  # noqa: WPS336
-    print('\n'.join(diff))  # noqa: WPS421
-    return '\n'.join(diff)
+    key_list = mark_keys(first_file, second_file)
+    diff = {}
+    for element in key_list:
+        key, status = element
+        value_one = first_file.get(key)
+        value_two = second_file.get(key)
+        diff_template = {
+            'added': value_two,
+            'deleted': value_one,
+            'unchanged': value_one,
+            'changed': (value_one, value_two),
+        }
+        if isinstance(value_one, dict) and isinstance(value_two, dict):
+            diff.setdefault(element, find_diff(
+                value_one,
+                second_file.get(key),
+                level + 1,
+            ))
+        else:
+            diff.setdefault(element, diff_template[status])
+    return diff
 
 
-def generate_diff_lines(key, status, value_one, value_two='', level=0):
-    """Generate string depending on key/value status."""
+def stylish(diff_tree, level=0, changed_value=''):  # noqa: WPS210
+    """Generate string from diff tree."""
+    if not isinstance(diff_tree, dict):
+        return diff_tree
+    diff_output = '{\n'
     indent = '    ' * level
-    if isinstance(value_one, dict):
-        value_one = dict_to_string(value_one, level + 1)
-    if isinstance(value_two, dict):
-        value_two = dict_to_string(value_two, level + 1)
-    string_template = {
-        'added': f'{indent}  + {key}: {value_two}',
-        'deleted': f'{indent}  - {key}: {value_one}',
-        'unchanged': f'{indent}    {key}: {value_one}',
-        'changed': f'{indent}  - {key}: {value_one}\n'   # noqa: WPS221, WPS326
-                   f'{indent}  + {key}: {value_two}',  # noqa: WPS318, WPS326
-    }
-    return string_template[status]
+    for marked_key, keys_value in diff_tree.items():
+        if isinstance(marked_key, str):
+            key = marked_key
+            status = 'unchanged'
+        else:
+            key, status = marked_key
+        if isinstance(keys_value, dict):
+            keys_value = stylish(keys_value, level + 1)
+        if isinstance(keys_value, tuple):
+            changed_value = stylish(keys_value[1], level + 1)
+            keys_value = stylish(keys_value[0], level + 1)
+        lines_template = {
+            'added': f'{diff_output}{indent}  + {key}: {keys_value}\n',
+            'deleted': f'{diff_output}{indent}  - {key}: {keys_value}\n',
+            'unchanged': f'{diff_output}{indent}    {key}: {keys_value}\n',
+            'changed': f'{diff_output}{indent}  - {key}: {keys_value}\n'  # noqa: E501, WPS221
+                       f'{indent}  + {key}: {changed_value}\n',  # noqa: E501, WPS318, WPS326
+        }
+        diff_output = lines_template[status]
+    diff_output = f'{diff_output}{indent}' + '}'  # noqa: WPS336
+    return diff_output  # noqa: WPS331
 
 
-def sort_keys(items_one, items_two):
-    """Return dict with sorted keys (added, deleted, changed, unchanged)."""
+def mark_keys(items_one, items_two):
+    """Return sorted list with marked keys (added/deleted/changed/unchanged)."""
     keys_one = set(items_one.keys())
     keys_two = set(items_two.keys())
-    sorted_keys = {}
-    sorted_keys.update({'added': keys_two.difference(keys_one)})
-    sorted_keys.update({'deleted': keys_one.difference(keys_two)})
-    sorted_keys.update({'unchanged': set(
-        filter(lambda key: is_unchanged(items_one, items_two, key), keys_one),
-    )})
-    sorted_keys.update({'changed': keys_one.difference(
-        sorted_keys['added'], sorted_keys['deleted'], sorted_keys['unchanged'],
-    )})
-    return sorted_keys
+    marked_keys = []
+    keys = keys_one.union(keys_two)
+    for key in keys:
+        if key in keys_two.difference(keys_one):
+            marked_keys.append((key, 'added'))
+        elif key in keys_one.difference(keys_two):
+            marked_keys.append((key, 'deleted'))
+        elif is_unchanged(items_one, items_two, key):
+            marked_keys.append((key, 'unchanged'))
+        else:
+            marked_keys.append((key, 'changed'))
+    marked_keys.sort(key=lambda marked_key: marked_key[0])
+    return marked_keys
 
 
 def is_unchanged(items_one, items_two, key):
@@ -86,22 +91,3 @@ def is_unchanged(items_one, items_two, key):
     return isinstance(items_one.get(key), dict) and (
         isinstance(items_two.get(key), dict)
     )
-
-
-def strip_string_to_sort(string):
-    """Delete spaces, + and - in start of the line."""
-    return string.lstrip().lstrip('-').lstrip('+').lstrip()
-
-
-def dict_to_string(dict_to_convert, level):
-    """Convert dict into a string (for added or deleted keys)."""
-    string = '{\n'
-    for key, value in dict_to_convert.items():  # noqa: WPS110
-        local_indent = '    ' * (level + 1)
-        if isinstance(value, dict):
-            converted_value = dict_to_string(value, level + 1)
-            string = f'{string}{local_indent}{key}: {converted_value}\n'
-        else:
-            string = f'{string}{local_indent}{key}: {value}\n'
-    string = string + ('    ' * level) + '}'  # noqa: WPS336
-    return string  # noqa: WPS331
