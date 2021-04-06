@@ -28,8 +28,8 @@ def find_diff(first_file, second_file, level=0):  # noqa: WPS210
         if isinstance(value_one, dict) and isinstance(value_two, dict):
             dict_diff = find_diff(value_one, second_file.get(key), level + 1)
             diff.setdefault(element, dict_diff)
-        else:
-            diff.setdefault(element, diff_template[status])
+            continue
+        diff.setdefault(element, diff_template[status])
     return diff
 
 
