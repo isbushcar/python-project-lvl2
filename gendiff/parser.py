@@ -6,23 +6,21 @@ import json
 import yaml
 
 
-def get_file_content(file_name):
-    """Return file's content depending on its format."""
+def load_file_content(file_name):
+    """Return file's parsed content depending on its format."""
     formats_load = {
         'json': json.load,
         'yaml': yaml.safe_load,
     }
-    return formats_load[get_format(file_name)](open(file_name))  # noqa: WPS515
+    file_format = get_format(file_name)
+    file_content = formats_load[file_format](open(file_name))  # noqa: WPS515
+    return parse(file_content, file_format)
 
 
-def parse(file_or_its_content, file_format=''):
+def parse(file_content, file_format):
     """Parse file content depending on it's format."""
-    if not file_format:
-        file_format = get_format(file_or_its_content)
-    if not isinstance(file_or_its_content, dict):
-        file_or_its_content = get_file_content(file_or_its_content)
     converted = {}
-    for key, value in file_or_its_content.items():  # noqa: WPS110
+    for key, value in file_content.items():  # noqa: WPS110
         if isinstance(value, dict):
             converted.setdefault(
                 str(get_encoded(key, file_format)),

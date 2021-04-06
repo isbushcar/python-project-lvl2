@@ -1,13 +1,13 @@
 """Generate diff between two json files."""
 
 
-from gendiff.parser import parse as parse_file
+from gendiff.parser import load_file_content
 
 
 def generate_diff(first_file, second_file):
     """Generate diff between two files."""
-    first_file = parse_file(first_file)
-    second_file = parse_file(second_file)
+    first_file = load_file_content(first_file)
+    second_file = load_file_content(second_file)
     return stylish(find_diff(first_file, second_file))
 
 
