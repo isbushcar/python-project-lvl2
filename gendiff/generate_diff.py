@@ -26,11 +26,8 @@ def find_diff(first_file, second_file, level=0):  # noqa: WPS210
             'changed': (value_one, value_two),
         }
         if isinstance(value_one, dict) and isinstance(value_two, dict):
-            diff.setdefault(element, find_diff(
-                value_one,
-                second_file.get(key),
-                level + 1,
-            ))
+            dict_diff = find_diff(value_one, second_file.get(key), level + 1)
+            diff.setdefault(element, dict_diff)
         else:
             diff.setdefault(element, diff_template[status])
     return diff
