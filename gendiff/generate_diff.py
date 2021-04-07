@@ -1,5 +1,7 @@
 """Generate diff between two json files."""
 
+from functools import partial
+
 from gendiff.formatter import stylish
 from gendiff.parser import load_file_content
 
@@ -35,30 +37,28 @@ def find_diff(first_file, second_file, level=0):  # noqa: WPS210
 
 
 def mark_keys(items_one, items_two):
-    """Return sorted list with marked keys (added/deleted/changed/unchanged)."""
-    keys_one = set(items_one.keys())
-    keys_two = set(items_two.keys())
+    """Return sorted list with tuple (key, mark)."""
+    get_status = partial(get_key_status, items_one, items_two)
     marked_keys = []
-    keys = keys_one.union(keys_two)
+    keys = set(items_one.keys()).union(set(items_two.keys()))
     for key in keys:
-        if key in keys_two.difference(keys_one):
-            marked_keys.append((key, 'added'))
-            continue
-        if key in keys_one.difference(keys_two):
-            marked_keys.append((key, 'deleted'))
-            continue
-        if is_unchanged(items_one, items_two, key):
-            marked_keys.append((key, 'unchanged'))
-            continue
-        marked_keys.append((key, 'changed'))
+        marked_keys.append((key, get_status(key)))
     marked_keys.sort(key=lambda marked_key: marked_key[0])
     return marked_keys
 
 
-def is_unchanged(items_one, items_two, key):
-    """Return True if values are dictionaries or equal to each other."""
-    if items_one.get(key) == items_two.get(key):
-        return True
-    return isinstance(items_one.get(key), dict) and (
-        isinstance(items_two.get(key), dict)
-    )
+def get_key_status(items_one, items_two, key):
+    """Return key status ((added/deleted/changed/unchanged)."""
+    keys_one = set(items_one.keys())
+    keys_two = set(items_two.keys())
+    if key in keys_two.difference(keys_one):
+        return 'added'
+    if key in keys_one.difference(keys_two):
+        return 'deleted'
+    is_unchanged = items_one.get(key) == items_two.get(key) or (
+        isinstance(items_one.get(key), dict) and (
+            isinstance(items_two.get(key), dict)
+        ))
+    if is_unchanged:
+        return 'unchanged'
+    return 'changed'
