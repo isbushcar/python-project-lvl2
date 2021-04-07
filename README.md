@@ -6,3 +6,4 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/88fbecc42c307d673118/test_coverage)](https://codeclimate.com/github/isbushcar/python-project-lvl2/test_coverage)
 [![asciicast](https://asciinema.org/a/ZJUO9uyZ3yvo8gAsginAHhVvk.svg)](https://asciinema.org/a/ZJUO9uyZ3yvo8gAsginAHhVvk)
 [![asciicast](https://asciinema.org/a/cmDyAuqsxFrGaTOQyH2mm3c9x.svg)](https://asciinema.org/a/cmDyAuqsxFrGaTOQyH2mm3c9x)
+[![asciicast](https://asciinema.org/a/7rQzprhkmiaLYXa5ICCbsV0Jm.svg)](https://asciinema.org/a/7rQzprhkmiaLYXa5ICCbsV0Jm)
