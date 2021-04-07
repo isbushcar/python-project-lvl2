@@ -43,12 +43,14 @@ def mark_keys(items_one, items_two):
     for key in keys:
         if key in keys_two.difference(keys_one):
             marked_keys.append((key, 'added'))
-        elif key in keys_one.difference(keys_two):
+            continue
+        if key in keys_one.difference(keys_two):
             marked_keys.append((key, 'deleted'))
-        elif is_unchanged(items_one, items_two, key):
+            continue
+        if is_unchanged(items_one, items_two, key):
             marked_keys.append((key, 'unchanged'))
-        else:
-            marked_keys.append((key, 'changed'))
+            continue
+        marked_keys.append((key, 'changed'))
     marked_keys.sort(key=lambda marked_key: marked_key[0])
     return marked_keys
 
