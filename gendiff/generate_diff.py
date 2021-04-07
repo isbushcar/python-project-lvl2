@@ -1,14 +1,15 @@
 """Generate diff between two json files."""
 
-
+from gendiff.formatter import stylish
 from gendiff.parser import load_file_content
 
 
-def generate_diff(first_file, second_file):
+def generate_diff(first_file, second_file, formatter=stylish):
     """Generate diff between two files."""
     first_file = load_file_content(first_file)
     second_file = load_file_content(second_file)
-    return stylish(find_diff(first_file, second_file))
+    print(find_diff(first_file, second_file))  # noqa: WPS421
+    return formatter(find_diff(first_file, second_file))
 
 
 def find_diff(first_file, second_file, level=0):  # noqa: WPS210
@@ -31,35 +32,6 @@ def find_diff(first_file, second_file, level=0):  # noqa: WPS210
             continue
         diff.setdefault(element, diff_template[status])
     return diff
-
-
-def stylish(diff_tree, level=0, changed_value=''):  # noqa: WPS210
-    """Generate string from diff tree."""
-    if not isinstance(diff_tree, dict):
-        return diff_tree
-    diff_output = '{\n'
-    indent = '    ' * level
-    for marked_key, keys_value in diff_tree.items():
-        if isinstance(marked_key, str):
-            key = marked_key
-            status = 'unchanged'
-        else:
-            key, status = marked_key
-        if isinstance(keys_value, dict):
-            keys_value = stylish(keys_value, level + 1)
-        if isinstance(keys_value, tuple):
-            changed_value = stylish(keys_value[1], level + 1)
-            keys_value = stylish(keys_value[0], level + 1)
-        lines_template = {
-            'added': f'{diff_output}{indent}  + {key}: {keys_value}\n',
-            'deleted': f'{diff_output}{indent}  - {key}: {keys_value}\n',
-            'unchanged': f'{diff_output}{indent}    {key}: {keys_value}\n',
-            'changed': f'{diff_output}{indent}  - {key}: {keys_value}\n'  # noqa: E501, WPS221
-                       f'{indent}  + {key}: {changed_value}\n',  # noqa: E501, WPS318, WPS326
-        }
-        diff_output = lines_template[status]
-    diff_output = f'{diff_output}{indent}' + '}'  # noqa: WPS336
-    return diff_output  # noqa: WPS331
 
 
 def mark_keys(items_one, items_two):
