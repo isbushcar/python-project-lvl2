@@ -5,7 +5,8 @@
 
 import argparse
 
-from gendiff.formatter import stylish
+from gendiff.formaters.plain import plain
+from gendiff.formaters.stylish import stylish
 from gendiff.generate_diff import generate_diff
 
 parser = argparse.ArgumentParser(
@@ -22,9 +23,17 @@ parser.add_argument(
 args = parser.parse_args()
 
 
+FORMATERS = {  # noqa: WPS407, WPS417
+    stylish: stylish,
+    'stylish': stylish,
+    plain: plain,
+    'plain': plain,
+}
+
+
 def main():
     """Run generate_diff with parsed arguments."""
-    generate_diff(args.first_file, args.second_file, args.format)
+    generate_diff(args.first_file, args.second_file, FORMATERS[args.format])
 
 
 if __name__ == '__main__':

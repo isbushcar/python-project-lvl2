@@ -2,15 +2,15 @@
 
 from functools import partial
 
-from gendiff.formatter import stylish
+from gendiff.formaters.stylish import stylish
 from gendiff.parser import load_file_content
 
 
-def generate_diff(first_file, second_file, formatter=stylish):
+def generate_diff(first_file, second_file, formater=stylish):
     """Generate diff between two files."""
     first_file = load_file_content(first_file)
     second_file = load_file_content(second_file)
-    formatted_output = formatter(find_diff(first_file, second_file))
+    formatted_output = formater(find_diff(first_file, second_file))
     print(formatted_output)  # noqa: WPS421
     return formatted_output
 

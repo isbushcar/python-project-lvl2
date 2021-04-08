@@ -1,4 +1,4 @@
-"""Contains function converting diff tree to output format."""
+"""Contains function converting diff tree to stylish output format."""
 
 
 def stylish(diff_tree, level=0):  # noqa: WPS210
@@ -11,13 +11,13 @@ def stylish(diff_tree, level=0):  # noqa: WPS210
         key, status = get_key_and_status(marked_key)
         old_value, current_value = unpack_value(keys_value, level)
         lines_template = {
-            'added': f'{diff_output}{indent}  + {key}: {current_value}\n',
-            'deleted': f'{diff_output}{indent}  - {key}: {current_value}\n',
-            'unchanged': f'{diff_output}{indent}    {key}: {current_value}\n',
-            'changed': f'{diff_output}{indent}  - {key}: {current_value}\n'  # noqa: E501, WPS221
+            'added': f'{indent}  + {key}: {current_value}\n',
+            'deleted': f'{indent}  - {key}: {current_value}\n',
+            'unchanged': f'{indent}    {key}: {current_value}\n',
+            'changed': f'{indent}  - {key}: {current_value}\n'  # noqa: E501, WPS221
                        f'{indent}  + {key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
         }
-        diff_output = lines_template[status]
+        diff_output = f'{diff_output}{lines_template[status]}'
     diff_output = f'{diff_output}{indent}' + '}'  # noqa: WPS336
     return diff_output  # noqa: WPS331
 
