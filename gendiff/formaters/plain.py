@@ -4,35 +4,31 @@
 def plain(diff_tree, path=''):  # noqa: WPS210
     """Generate string from diff tree."""
     diff_output = ''
-    for marked_key, keys_value in diff_tree.items():
-        key, status = get_key_and_status(marked_key)
-        key = f'{path}.{key}' if path else key
+    for key, keys_value in diff_tree.items():
+        current_key, status = add_mark_and_path(key, path)
         if isinstance(keys_value, dict):
-            diff_output += plain(keys_value, key)
+            diff_output += plain(keys_value, current_key)
         current_value, old_value = get_value(keys_value)
-        line_to_add = make_line(key, status, old_value, current_value)
-        diff_output = f'{diff_output}{line_to_add}'
+        lines_template = {
+            'added': f"Property '{current_key}' was added with value: "
+                     f'{current_value}\n',  # noqa: WPS318, WPS326
+            'deleted': f"Property '{current_key}' was removed\n",
+            'unchanged': '',
+            'changed': f"Property '{current_key}' was updated. "
+                       f'From {old_value} to {current_value}\n',  # noqa: WPS318, WPS326, E501
+        }
+        diff_output = f'{diff_output}{lines_template[status]}'
     return diff_output  # noqa: WPS331
 
 
-def make_line(key, status, old_value, current_value):
-    """Return line to add depending on key status."""
-    lines_template = {
-        'added': f"Property '{key}' was added with value: "
-                 f'{current_value}\n',  # noqa: WPS318, WPS326
-        'deleted': f"Property '{key}' was removed\n",
-        'unchanged': '',
-        'changed': f"Property '{key}' was updated. "
-                   f'From {old_value} to {current_value}\n',  # noqa: WPS318, WPS326, E501
-    }
-    return f'{lines_template[status]}'
-
-
-def get_key_and_status(marked_key):
-    """Return key and its status. Unmarked keys get status 'unchanged'."""
-    if isinstance(marked_key, str):
-        return marked_key, 'unchanged'
-    return marked_key
+def add_mark_and_path(key, path=''):
+    """Add path to a key (if needed) and mark unmarked keys as 'unchanged'."""
+    if isinstance(key, str):
+        return f'{path}.{key}' if path else key, 'unchanged'
+    if path:
+        new_key = f'{path}.{key[0]}'
+        return new_key, key[1]
+    return key
 
 
 def wrap_with_quotes_and_hide_dicts(function):
