@@ -6,8 +6,7 @@ def plain(diff_tree, path=''):  # noqa: WPS210
     diff_output = ''
     for marked_key, keys_value in diff_tree.items():
         key, status = get_key_and_status(marked_key)
-        if path:
-            key = f'{path}.{key}'
+        key = f'{path}.{key}' if path else key
         if isinstance(keys_value, dict):
             diff_output += plain(keys_value, key)
         current_value, old_value = get_value(keys_value)

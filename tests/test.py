@@ -1,5 +1,6 @@
 import os, json
 
+from gendiff.formaters.plain import plain
 from gendiff.generate_diff import generate_diff
 
 from tests.test_results import *
@@ -27,6 +28,10 @@ def test_return():
         json_recursive_file1, json_recursive_file2) == compl_case_result
     assert generate_diff(
         yaml_recursive_file1, yaml_recursive_file2) == compl_case_result
+    assert generate_diff(
+        json_recursive_file1, json_recursive_file2, plain) == plain_case_result
+    assert generate_diff(
+        yaml_recursive_file1, yaml_recursive_file2, plain) == plain_case_result
 
 
 if __name__ == '__main__':
