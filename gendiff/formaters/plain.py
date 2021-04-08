@@ -10,16 +10,22 @@ def plain(diff_tree, path=''):  # noqa: WPS210
         if isinstance(keys_value, dict):
             diff_output += plain(keys_value, key)
         current_value, old_value = get_value(keys_value)
-        lines_template = {
-            'added': f"Property '{key}' was added with value: "
-                     f'{current_value}\n',  # noqa: WPS318, WPS326
-            'deleted': f"Property '{key}' was removed\n",
-            'unchanged': '',
-            'changed': f"Property '{key}' was updated. "
-                       f'From {old_value} to {current_value}\n',  # noqa: WPS318, WPS326, E501
-        }
-        diff_output = f'{diff_output}{lines_template[status]}'
+        line_to_add = make_line(key, status, old_value, current_value)
+        diff_output = f'{diff_output}{line_to_add}'
     return diff_output  # noqa: WPS331
+
+
+def make_line(key, status, old_value, current_value):
+    """Return line to add depending on key status."""
+    lines_template = {
+        'added': f"Property '{key}' was added with value: "
+                 f'{current_value}\n',  # noqa: WPS318, WPS326
+        'deleted': f"Property '{key}' was removed\n",
+        'unchanged': '',
+        'changed': f"Property '{key}' was updated. "
+                   f'From {old_value} to {current_value}\n',  # noqa: WPS318, WPS326, E501
+    }
+    return f'{lines_template[status]}'
 
 
 def get_key_and_status(marked_key):
