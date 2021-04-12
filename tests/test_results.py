@@ -69,19 +69,51 @@ Property 'group3' was added with value: [complex value]
 
 
 json_case_result = """{
-  added: [
-    1,
-    2,
-    3
-  ],
-  "boolean": true,
-  "color": "gold",
-  "null": null,
-  "number": 123,
-  "object": {
-    "a": "b",
-    "c": "d"
+  "common": {
+    "added": {
+      "follow": "false",
+      "setting4": "blah blah",
+      "setting5": "[complex value]"
+    },
+    "deleted": {
+      "setting2": "200"
+    },
+    "changed": {
+      "setting3": [
+        "null",
+        "true"
+      ]
+    },
+    "setting6": {
+      "doge": {
+        "changed": {
+          "wow": [
+            "so much",
+            ""
+          ]
+        }
+      },
+      "added": {
+        "ops": "vops"
+      }
+    }
   },
-  "string": "Hello World"
-}
-"""
+  "group1": {
+    "changed": {
+      "baz": [
+        "bars",
+        "bas"
+      ],
+      "nest": [
+        "str",
+        "[complex value]"
+      ]
+    }
+  },
+  "deleted": {
+    "group2": "[complex value]"
+  },
+  "added": {
+    "group3": "[complex value]"
+  }
+}"""
