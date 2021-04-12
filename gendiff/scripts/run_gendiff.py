@@ -8,7 +8,7 @@ import argparse
 from gendiff.formaters.json_output import dump_json
 from gendiff.formaters.plain import plain
 from gendiff.formaters.stylish import stylish
-from gendiff.generate_diff import generate_diff
+from gendiff import generate_diff
 
 parser = argparse.ArgumentParser(
     prog='generate diff', description='Generate diff',
