@@ -2,15 +2,26 @@
 
 from functools import partial
 
+from gendiff.formaters.json_output import dump_json
+from gendiff.formaters.plain import plain
 from gendiff.formaters.stylish import stylish
 from gendiff.parser import load_file_content
+
+FORMATERS = {  # noqa: WPS407, WPS417
+    'stylish': stylish,
+    stylish: stylish,
+    'plain': plain,
+    plain: plain,
+    'json': dump_json,
+    dump_json: dump_json,
+}
 
 
 def generate_diff(first_file, second_file, formater=stylish):
     """Generate diff between two files."""
     first_file = load_file_content(first_file)
     second_file = load_file_content(second_file)
-    formatted_output = formater(find_diff(first_file, second_file))
+    formatted_output = FORMATERS[formater](find_diff(first_file, second_file))
     print(formatted_output)  # noqa: WPS421
     return formatted_output
 
