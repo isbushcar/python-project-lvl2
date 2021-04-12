@@ -7,29 +7,22 @@ def stylish(diff_tree, level=0):  # noqa: WPS210
         return diff_tree
     diff_output = '{\n'
     indent = '    ' * level
-    for marked_key, keys_value in diff_tree.items():
-        key, status = get_key_and_status(marked_key)
-        old_value, current_value = unpack_value(keys_value, level)
+    for key, keys_value in diff_tree.items():
+        current_key, status = key
+        old_value, current_value = get_value(keys_value, level)
         lines_template = {
-            'added': f'{indent}  + {key}: {current_value}\n',
-            'deleted': f'{indent}  - {key}: {current_value}\n',
-            'unchanged': f'{indent}    {key}: {current_value}\n',
-            'changed': f'{indent}  - {key}: {current_value}\n'  # noqa: E501, WPS221
-                       f'{indent}  + {key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
+            'added': f'{indent}  + {current_key}: {current_value}\n',
+            'deleted': f'{indent}  - {current_key}: {current_value}\n',
+            'unchanged': f'{indent}    {current_key}: {current_value}\n',
+            'changed': f'{indent}  - {current_key}: {current_value}\n'  # noqa: E501, WPS221
+                       f'{indent}  + {current_key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
         }
         diff_output = f'{diff_output}{lines_template[status]}'
     diff_output = f'{diff_output}{indent}' + '}'  # noqa: WPS336
     return diff_output  # noqa: WPS331
 
 
-def get_key_and_status(marked_key):
-    """Return key and its status. Unmarked keys get status 'unchanged'."""
-    if isinstance(marked_key, str):
-        return marked_key, 'unchanged'
-    return marked_key
-
-
-def unpack_value(keys_value, level):
+def get_value(keys_value, level):
     """Return correct values to add to diff output."""
     if isinstance(keys_value, dict):
         return None, stylish(keys_value, level + 1)

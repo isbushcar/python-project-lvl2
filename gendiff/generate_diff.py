@@ -24,10 +24,12 @@ def find_diff(first_file, second_file, level=0):  # noqa: WPS210
         value_one = first_file.get(key)
         value_two = second_file.get(key)
         diff_template = {
-            'added': value_two,
-            'deleted': value_one,
-            'unchanged': value_one,
-            'changed': (value_one, value_two),
+            'added': mark_unmarked_keys(value_two),
+            'deleted': mark_unmarked_keys(value_one),
+            'unchanged': mark_unmarked_keys(value_one),
+            'changed': (mark_unmarked_keys(value_one), mark_unmarked_keys(
+                value_two,
+            )),
         }
         if isinstance(value_one, dict) and isinstance(value_two, dict):
             dict_diff = find_diff(value_one, second_file.get(key), level + 1)
@@ -63,3 +65,13 @@ def get_key_status(items_one, items_two, key):
     if is_unchanged:
         return 'unchanged'
     return 'changed'
+
+
+def mark_unmarked_keys(element):
+    """Check dict and mark unmarked keys as 'unchanged'."""
+    if not isinstance(element, dict):
+        return element
+    updated_dict = {}
+    for key, value in element.items():  # noqa: WPS110
+        updated_dict.setdefault((key, 'unchanged'), mark_unmarked_keys(value))
+    return updated_dict

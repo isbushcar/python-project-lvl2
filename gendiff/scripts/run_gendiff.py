@@ -5,6 +5,7 @@
 
 import argparse
 
+from gendiff.formaters.json_output import json_output
 from gendiff.formaters.plain import plain
 from gendiff.formaters.stylish import stylish
 from gendiff.generate_diff import generate_diff
@@ -24,10 +25,12 @@ args = parser.parse_args()
 
 
 FORMATERS = {  # noqa: WPS407, WPS417
-    stylish: stylish,
     'stylish': stylish,
-    plain: plain,
+    stylish: stylish,
     'plain': plain,
+    plain: plain,
+    'json': json_output,
+    json_output: json_output,
 }
 
 

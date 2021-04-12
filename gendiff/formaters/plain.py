@@ -5,7 +5,7 @@ def plain(diff_tree, path=''):  # noqa: WPS210
     """Generate string from diff tree."""
     diff_output = ''
     for key, keys_value in diff_tree.items():
-        current_key, status = add_mark_and_path(key, path)
+        current_key, status = add_path(key, path)
         if isinstance(keys_value, dict):
             diff_output += plain(keys_value, current_key)
         current_value, old_value = get_value(keys_value)
@@ -21,10 +21,8 @@ def plain(diff_tree, path=''):  # noqa: WPS210
     return diff_output  # noqa: WPS331
 
 
-def add_mark_and_path(key, path=''):
-    """Add path to a key (if needed) and mark unmarked keys as 'unchanged'."""
-    if isinstance(key, str):
-        return f'{path}.{key}' if path else key, 'unchanged'
+def add_path(key, path=''):
+    """Add path to a key (if needed)."""
     if path:
         new_key = f'{path}.{key[0]}'
         return new_key, key[1]
