@@ -23,7 +23,7 @@ def parse(file_content, file_format):
     for key, value in file_content.items():  # noqa: WPS110
         if isinstance(value, dict):
             converted.setdefault(
-                str(get_encoded(key, file_format)),
+                get_encoded(key, file_format),
                 parse(value, file_format),
             )
         else:
@@ -45,9 +45,9 @@ def get_format(file_name):
 
 
 def get_encoded(element, file_format):
-    """Return string with encoded item depending on format."""
-    items_to_encode = {True, False, None}
-    if element not in items_to_encode:
+    """Return encoded item depending on it's format."""
+    items_to_encode = {'True', 'False', 'None'}
+    if str(element) not in items_to_encode:
         return element
     formats_dump = {
         'json': json.dumps,
