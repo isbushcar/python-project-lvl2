@@ -17,9 +17,9 @@ def adapt_to_json(diff_tree):  # noqa: WPS210
     for key, keys_value in diff_tree.items():
         current_key, status = key
         items_to_add = get_items_to_add(current_key, status, keys_value)
-        if items_to_add is None:
-            continue
         if status == 'unchanged':
+            if items_to_add is None:
+                continue
             json_adapted.setdefault(*items_to_add)
             continue
         json_adapted.setdefault(status, {})
