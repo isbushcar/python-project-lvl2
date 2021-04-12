@@ -1,4 +1,4 @@
-from gendiff_package.parser import parse_file
+from gendiff.parser import parse_file
 
 def generate_diff(first_file, second_file):  # noqa: WPS210
     """Generate diff between two files."""

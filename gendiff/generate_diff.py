@@ -2,8 +2,8 @@
 
 from functools import partial
 
-from gendiff_package.formaters.stylish import stylish
-from gendiff_package.parser import load_file_content
+from gendiff.formaters.stylish import stylish
+from gendiff.parser import load_file_content
 
 
 def generate_diff(first_file, second_file, formater=stylish):

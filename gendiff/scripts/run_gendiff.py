@@ -5,10 +5,10 @@
 
 import argparse
 
-from gendiff_package.formaters.json_output import dump_json
-from gendiff_package.formaters.plain import plain
-from gendiff_package.formaters.stylish import stylish
-from gendiff_package import generate_diff
+from gendiff.formaters.json_output import dump_json
+from gendiff.formaters.plain import plain
+from gendiff.formaters.stylish import stylish
+from gendiff.generate_diff import generate_diff
 
 parser = argparse.ArgumentParser(
     prog='generate diff', description='Generate diff',
