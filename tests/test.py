@@ -4,7 +4,7 @@ from gendiff.formaters.json_output import dump_json
 from gendiff.formaters.plain import plain
 from gendiff.generate_diff import generate_diff
 
-from tests.expected_results import *
+from tests.expected_results import simple_case_result, compl_case_result, plain_case_result, json_case_result
 
 
 def get_fixture_path(file_name):
