@@ -11,7 +11,7 @@ def get_path(file_name, folder_name):
 
 
 def test_simple_case():
-    simple_case_result = open(get_path('simple_case_result', 'expected_results')).read()
+    simple_case_result = open(get_path('simple_case_result.txt', 'expected_results')).read()
     json_file1 = get_path('file1.json', 'fixtures')
     json_file2 = get_path('file2.json', 'fixtures')
     assert generate_diff(json_file1, json_file2) == simple_case_result
@@ -21,7 +21,7 @@ def test_simple_case():
 
 
 def test_recursive_case():
-    recursive_case_result = open(get_path('recursive_case_result', 'expected_results')).read()
+    recursive_case_result = open(get_path('recursive_case_result.txt', 'expected_results')).read()
     json_recursive_file1 = get_path('recursive_file1.json', 'fixtures')
     json_recursive_file2 = get_path('recursive_file2.json', 'fixtures')
     assert generate_diff(json_recursive_file1, json_recursive_file2) == recursive_case_result
@@ -31,7 +31,7 @@ def test_recursive_case():
 
 
 def test_plain_case():
-    plain_case_result = open(get_path('plain_case_result', 'expected_results')).read()
+    plain_case_result = open(get_path('plain_case_result.txt', 'expected_results')).read()
     json_recursive_file1 = get_path('recursive_file1.json', 'fixtures')
     json_recursive_file2 = get_path('recursive_file2.json', 'fixtures')
     assert generate_diff(json_recursive_file1, json_recursive_file2, 'plain') == plain_case_result
@@ -41,7 +41,7 @@ def test_plain_case():
 
 
 def test_json_case():
-    json_case_result = open(get_path('json_case_result', 'expected_results')).read()
+    json_case_result = open(get_path('json_case_result.txt', 'expected_results')).read()
     json_recursive_file1 = get_path('recursive_file1.json', 'fixtures')
     json_recursive_file2 = get_path('recursive_file2.json', 'fixtures')
     assert generate_diff(json_recursive_file1, json_recursive_file2, 'json') == json_case_result

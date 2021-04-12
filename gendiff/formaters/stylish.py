@@ -14,8 +14,8 @@ def stylish(diff_tree, level=0):  # noqa: WPS210
             'added': f'{indent}  + {current_key}: {current_value}\n',
             'deleted': f'{indent}  - {current_key}: {current_value}\n',
             'unchanged': f'{indent}    {current_key}: {current_value}\n',
-            'changed': f'{indent}  - {current_key}: {current_value}'.rstrip(' ') +  # noqa: E501, WPS221, W504
-                       f'\n{indent}  + {current_key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
+            'changed': f'{indent}  - {current_key}: {current_value}\n'  # noqa: E501, WPS221
+                       f'{indent}  + {current_key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
         }
         diff_output = f'{diff_output}{lines_template[status]}'
     diff_output = f'{diff_output}{indent}' + '}'  # noqa: WPS336
