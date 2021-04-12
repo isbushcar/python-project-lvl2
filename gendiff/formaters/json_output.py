@@ -17,23 +17,22 @@ def adapt_to_json(diff_tree):  # noqa: WPS210
     for key, keys_value in diff_tree.items():
         current_key, status = key
         items_to_add = get_items_to_add(current_key, status, keys_value)
-        if status == 'unchanged':
-            if items_to_add is None:
+        if items_to_add:
+            if status == 'unchanged':
+                json_adapted.setdefault(*items_to_add)
                 continue
-            json_adapted.setdefault(*items_to_add)
-            continue
-        json_adapted.setdefault(status, {})
-        json_adapted[status].setdefault(*items_to_add)
+            json_adapted.setdefault(status, {})
+            json_adapted[status].setdefault(*items_to_add)
     return json_adapted
 
 
 def get_items_to_add(current_key, status, keys_value):
-    """Return keys and values for dicts to add."""
+    """Return keys and values to add or False if there's nothing to add."""
     old_value, current_value = get_value(keys_value)
     if status == 'unchanged':
         if isinstance(current_value, dict):
             return current_key, current_value
-        return None
+        return False
     if status == 'changed':
         return current_key, [hide_dicts(old_value), hide_dicts(current_value)]
     return current_key, hide_dicts(current_value)
