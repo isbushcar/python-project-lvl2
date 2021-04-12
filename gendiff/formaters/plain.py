@@ -1,13 +1,18 @@
 """Contains function converting diff tree to plain output format."""
 
 
-def plain(diff_tree, path=''):  # noqa: WPS210
+def plain(diff_tree):
+    """Return plain diff from diff tree."""
+    return make_plain(diff_tree).rstrip()
+
+
+def make_plain(diff_tree, path=''):  # noqa: WPS210
     """Generate string from diff tree."""
     diff_output = ''
     for key, keys_value in diff_tree.items():
         current_key, status = add_path(key, path)
         if isinstance(keys_value, dict):
-            diff_output += plain(keys_value, current_key)
+            diff_output += make_plain(keys_value, current_key)
         current_value, old_value = get_value(keys_value)
         lines_template = {
             'added': f"Property '{current_key}' was added with value: "
@@ -18,7 +23,7 @@ def plain(diff_tree, path=''):  # noqa: WPS210
                        f'From {old_value} to {current_value}\n',  # noqa: WPS318, WPS326, E501
         }
         diff_output = f'{diff_output}{lines_template[status]}'
-    return diff_output  # noqa: WPS331
+    return diff_output
 
 
 def add_path(key, path=''):
@@ -38,7 +43,7 @@ def wrap_with_quotes_and_hide_dicts(function):
         for element in func_result:
             if isinstance(element, dict):
                 corrected_result.append('[complex value]')
-            elif element in stop_list:
+            elif isinstance(element, int) or element in stop_list:
                 corrected_result.append(element)
             else:
                 corrected_result.append(f"'{element}'")
