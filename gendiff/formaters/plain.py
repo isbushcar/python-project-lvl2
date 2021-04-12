@@ -34,7 +34,7 @@ def add_path(key, path=''):
     return key
 
 
-def wrap_with_quotes_and_hide_dicts(function):
+def wrap_with_quotes_and_hide_dicts(function):  # noqa: WPS231
     """Wrap string with quotes and change dict values with [complex value]."""
     def wrapper(keys_value):
         stop_list = {'true', 'false', 'null'}

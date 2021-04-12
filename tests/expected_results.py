@@ -75,7 +75,7 @@ json_case_result = """{
       "setting5": "[complex value]"
     },
     "deleted": {
-      "setting2": "200"
+      "setting2": 200
     },
     "changed": {
       "setting3": [

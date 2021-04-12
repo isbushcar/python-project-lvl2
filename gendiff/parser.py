@@ -46,7 +46,8 @@ def get_format(file_name):
 
 def get_encoded(element, file_format):
     """Return string with encoded item depending on format."""
-    if isinstance(element, str):
+    items_to_encode = {True, False, None}
+    if element not in items_to_encode:
         return element
     formats_dump = {
         'json': json.dumps,
