@@ -39,6 +39,7 @@ def get_format(file_name):
     formats = {
         '.json': 'json',
         '.yaml': 'yaml',
+        '.yml': 'yaml',
     }
     return formats[file_name[file_name.rfind('.'):]]
 
