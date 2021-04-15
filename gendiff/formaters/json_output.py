@@ -15,11 +15,11 @@ def adapt_to_json(diff_tree):  # noqa: WPS210
         return diff_tree
     json_adapted = {}
     for key, keys_value in diff_tree.items():
-        current_key, status = key
+        current_key, status = get_key_and_status(key)
         items_to_add = get_items_to_add(current_key, status, keys_value)
         if items_to_add is None:
             continue
-        if status == 'unchanged':
+        if status in {'unchanged', 'nested'}:
             json_adapted.setdefault(*items_to_add)
             continue
         json_adapted.setdefault(status, {})
@@ -31,9 +31,9 @@ def get_items_to_add(current_key, status, keys_value):
     """Return keys and values to add."""
     old_value, current_value = get_value(keys_value)
     if status == 'unchanged':
-        if isinstance(current_value, dict):
-            return current_key, current_value
         return None
+    if status == 'nested':
+        return current_key, current_value
     if status == 'changed':
         return current_key, [hide_dicts(old_value), hide_dicts(current_value)]
     return current_key, hide_dicts(current_value)
@@ -55,3 +55,10 @@ def get_value(keys_value):
             adapt_to_json(keys_value[0])
         )
     return None, keys_value
+
+
+def get_key_and_status(key):
+    """Return key and its status (unmarked keys get status 'unchanged'."""
+    if isinstance(key, tuple):
+        return key[0], key[1]
+    return key, 'unchanged'

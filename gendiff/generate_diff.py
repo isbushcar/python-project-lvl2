@@ -1,7 +1,5 @@
 """Generate diff between two json files."""
 
-from functools import partial
-
 from gendiff.formaters.json_output import dump_json
 from gendiff.formaters.plain import plain
 from gendiff.formaters.stylish import stylish
@@ -28,57 +26,40 @@ def generate_diff(first_file, second_file, formater=stylish):
 
 def find_diff(first_file, second_file, level=0):  # noqa: WPS210
     """Find difference between data in two objects."""
-    key_list = mark_keys(first_file, second_file)
+    key_list = list(set(first_file.keys()).union(set(second_file.keys())))  # noqa: WPS221, E501
+    key_list.sort()
     diff = {}
-    for element in key_list:
-        key, status = element
+    for key in key_list:
         value_one = first_file.get(key)
         value_two = second_file.get(key)
         diff_template = {
-            'added': mark_unmarked_keys(value_two),
-            'deleted': mark_unmarked_keys(value_one),
-            'unchanged': mark_unmarked_keys(value_one),
-            'changed': (mark_unmarked_keys(value_one), mark_unmarked_keys(
-                value_two,
-            )),
+            'added': value_two,
+            'deleted': value_one,
+            'unchanged': value_one,
+            'changed': (value_one, value_two),
         }
-        if isinstance(value_one, dict) and isinstance(value_two, dict):
-            dict_diff = find_diff(value_one, second_file.get(key), level + 1)
-            diff.setdefault(element, dict_diff)
+        status = get_key_status(value_one, value_two)
+        if status == 'nested':
+            diff.setdefault((key, status), find_diff(value_one, value_two))
             continue
-        diff.setdefault(element, diff_template[status])
+        diff.setdefault((key, status), diff_template[status])
     return diff
 
 
-def mark_keys(items_one, items_two):
-    """Return sorted list with tuple (key, mark)."""
-    get_status = partial(get_key_status, items_one, items_two)
-    marked_keys = []
-    keys = set(items_one.keys()).union(set(items_two.keys()))
-    for key in keys:
-        marked_keys.append((key, get_status(key)))
-    marked_keys.sort(key=lambda marked_key: marked_key[0])
-    return marked_keys
-
-
-def get_key_status(items_one, items_two, key):
-    """Return key status ((added/deleted/changed/unchanged)."""
-    keys_one = set(items_one.keys())
-    keys_two = set(items_two.keys())
-    if key in keys_two.difference(keys_one):
+def get_key_status(value_one, value_two):
+    """Return key status (added/deleted/changed/unchanged)."""
+    if value_one is None:
         return 'added'
-    if key in keys_one.difference(keys_two):
+    if value_two is None:
         return 'deleted'
-    is_unchanged = items_one.get(key) == items_two.get(key) or (
-        isinstance(items_one.get(key), dict) and (
-            isinstance(items_two.get(key), dict)
-        ))
-    if is_unchanged:
+    if value_one == value_two:
         return 'unchanged'
+    if isinstance(value_one, dict) and isinstance(value_two, dict):
+        return 'nested'
     return 'changed'
 
 
-def mark_unmarked_keys(element):
+def mark_unmarked_keys(element):  # TODO: delete
     """Check dict and mark unmarked keys as 'unchanged'."""
     if not isinstance(element, dict):
         return element

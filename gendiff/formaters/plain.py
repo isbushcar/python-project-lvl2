@@ -10,9 +10,10 @@ def make_plain(diff_tree, path=''):  # noqa: WPS210
     """Generate string from diff tree."""
     diff_output = ''
     for key, keys_value in diff_tree.items():
-        current_key, status = add_path(key, path)
-        if isinstance(keys_value, dict):
+        current_key, status = get_status_and_add_path(key, path)
+        if status == 'nested':
             diff_output += make_plain(keys_value, current_key)
+            continue
         current_value, old_value = get_value(keys_value)
         lines_template = {
             'added': f"Property '{current_key}' was added with value: "
@@ -26,8 +27,10 @@ def make_plain(diff_tree, path=''):  # noqa: WPS210
     return diff_output
 
 
-def add_path(key, path=''):
-    """Add path to a key (if needed)."""
+def get_status_and_add_path(key, path=''):
+    """Add path to a key (if needed) and set unmarked keys as 'unchanged'."""
+    if not isinstance(key, tuple):
+        key = (key, 'unchanged')  # noqa: WPS434
     if path:
         new_key = f'{path}.{key[0]}'
         return new_key, key[1]

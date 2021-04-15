@@ -8,12 +8,13 @@ def stylish(diff_tree, level=0):  # noqa: WPS210
     diff_output = '{\n'
     indent = '    ' * level
     for key, keys_value in diff_tree.items():
-        current_key, status = key
+        current_key, status = get_key_and_status(key)
         old_value, current_value = get_value(keys_value, level)
         lines_template = {
             'added': f'{indent}  + {current_key}: {current_value}\n',
             'deleted': f'{indent}  - {current_key}: {current_value}\n',
             'unchanged': f'{indent}    {current_key}: {current_value}\n',
+            'nested': f'{indent}    {current_key}: {current_value}\n',
             'changed': f'{indent}  - {current_key}: {current_value}\n'  # noqa: E501, WPS221
                        f'{indent}  + {current_key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
         }
@@ -31,3 +32,10 @@ def get_value(keys_value, level):
             stylish(keys_value[0], level + 1)
         )
     return None, keys_value
+
+
+def get_key_and_status(key):
+    """Return key and its status (unmarked keys get status 'unchanged'."""
+    if isinstance(key, tuple):
+        return key[0], key[1]
+    return key, 'unchanged'
