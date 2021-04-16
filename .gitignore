@@ -6,3 +6,4 @@ scetchbook.py
 */.coverage
 .coverage
 coverage.xml
+htmlcov

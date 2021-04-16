@@ -29,8 +29,6 @@ def make_plain(diff_tree, path=''):  # noqa: WPS210
 
 def get_status_and_add_path(key, path=''):
     """Add path to a key (if needed) and set unmarked keys as 'unchanged'."""
-    if not isinstance(key, tuple):
-        key = (key, 'unchanged')  # noqa: WPS434
     if path:
         new_key = f'{path}.{key[0]}'
         return new_key, key[1]

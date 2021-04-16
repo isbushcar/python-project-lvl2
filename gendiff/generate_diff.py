@@ -57,13 +57,3 @@ def get_key_status(value_one, value_two):
     if isinstance(value_one, dict) and isinstance(value_two, dict):
         return 'nested'
     return 'changed'
-
-
-def mark_unmarked_keys(element):  # TODO: delete
-    """Check dict and mark unmarked keys as 'unchanged'."""
-    if not isinstance(element, dict):
-        return element
-    updated_dict = {}
-    for key, value in element.items():  # noqa: WPS110
-        updated_dict.setdefault((key, 'unchanged'), mark_unmarked_keys(value))
-    return updated_dict
