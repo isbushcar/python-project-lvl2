@@ -11,7 +11,7 @@ Could be used as python package or command-line utility.
 1. Clone repository: `git clone https://github.com/isbushcar/python-project-lvl2.git`
 2. Go to directory python-project-lvl2 `cd python-project-lvl2`
 3. Use command `poetry build`
-4. Use command `python3 -m pip install --user dist/*.whl`
+4. Use command `python3 -m pip install --user dist/*.whl` or `make install`
 5. You are breathtaking!
 ## How to use
 `gendiff [options] <File1> <File2>`
