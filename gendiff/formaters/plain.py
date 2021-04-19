@@ -41,22 +41,35 @@ def get_status_and_add_path(key, path=''):
 def wrap_with_quotes_and_hide_dicts(function):  # noqa: WPS231
     """Wrap string with quotes and change dict values with [complex value]."""
     def wrapper(keys_value):
-        stop_list = {'true', 'false', 'null'}
         func_result = function(keys_value)
         corrected_result = []
         for element in func_result:
             if isinstance(element, dict):
                 corrected_result.append('[complex value]')
                 continue
-            element = json.dumps(element).strip('"')
-            if isinstance(element, int) or element in stop_list:
+            if isinstance(element, int) or element is None:
                 corrected_result.append(element)
-            else:
-                corrected_result.append(f"'{element}'")
+                continue
+            corrected_result.append(f"'{element}'")
         return tuple(corrected_result)
     return wrapper
 
 
+def dump_to_json(function):
+    """Replace True/False/None with true/false/null."""
+    def wrapper(keys_value):
+        func_result = function(keys_value)
+        corrected_result = []
+        for element in func_result:
+            if element in {True, False, None}:
+                corrected_result.append(json.dumps(element).strip('"'))
+            else:
+                corrected_result.append(element)
+        return tuple(corrected_result)
+    return wrapper
+
+
+@dump_to_json
 @wrap_with_quotes_and_hide_dicts
 def get_value(keys_value):
     """Return formatted value to add to output."""
