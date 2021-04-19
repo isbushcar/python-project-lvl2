@@ -1,6 +1,9 @@
 """Contains function converting diff tree to plain output format."""
 
 
+import json
+
+
 def plain(diff_tree):
     """Return plain diff from diff tree."""
     return make_plain(diff_tree).rstrip()
@@ -44,7 +47,9 @@ def wrap_with_quotes_and_hide_dicts(function):  # noqa: WPS231
         for element in func_result:
             if isinstance(element, dict):
                 corrected_result.append('[complex value]')
-            elif isinstance(element, int) or element in stop_list:
+                continue
+            element = json.dumps(element).strip('"')
+            if isinstance(element, int) or element in stop_list:
                 corrected_result.append(element)
             else:
                 corrected_result.append(f"'{element}'")
