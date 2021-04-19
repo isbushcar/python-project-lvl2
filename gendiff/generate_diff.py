@@ -7,11 +7,8 @@ from gendiff.parser import load_file_content
 
 FORMATERS = {  # noqa: WPS407, WPS417
     'stylish': stylish,
-    stylish: stylish,
     'plain': plain,
-    plain: plain,
     'json': dump_json,
-    dump_json: dump_json,
 }
 
 
@@ -19,41 +16,38 @@ def generate_diff(first_file, second_file, formater=stylish):
     """Generate diff between two files."""
     first_file = load_file_content(first_file)
     second_file = load_file_content(second_file)
-    formatted_output = FORMATERS[formater](find_diff(first_file, second_file))
+    if isinstance(formater, str):
+        formatted_output = FORMATERS[formater](
+            find_diff(first_file, second_file),
+        )
+    else:
+        formatted_output = formater(find_diff(first_file, second_file))
     print(formatted_output)  # noqa: WPS421
     return formatted_output
 
 
-def find_diff(first_file, second_file, level=0):  # noqa: WPS210
+def find_diff(first_file, second_file):  # noqa: WPS210
     """Find difference between data in two objects."""
-    key_list = list(set(first_file.keys()).union(set(second_file.keys())))  # noqa: WPS221, E501
+    key_list = list(first_file.keys() | second_file.keys())
     key_list.sort()
     diff = {}
     for key in key_list:
-        value_one = first_file.get(key)
-        value_two = second_file.get(key)
-        diff_template = {
-            'added': value_two,
-            'deleted': value_one,
-            'unchanged': value_one,
-            'changed': (value_one, value_two),
-        }
-        status = get_key_status(value_one, value_two)
-        if status == 'nested':
-            diff.setdefault((key, status), find_diff(value_one, value_two))
-            continue
-        diff.setdefault((key, status), diff_template[status])
+        value_one = first_file.get(key, '[do not exist]')
+        value_two = second_file.get(key, '[do not exist]')
+        if isinstance(value_one, dict) and isinstance(value_two, dict):
+            diff[(key, 'nested')] = find_diff(value_one, value_two)
+        else:
+            status, keys_value = get_key_status_and_value(value_one, value_two)
+            diff[key, status] = keys_value
     return diff
 
 
-def get_key_status(value_one, value_two):
+def get_key_status_and_value(value_one, value_two):
     """Return key status (added/deleted/changed/unchanged)."""
-    if value_one is None:
-        return 'added'
-    if value_two is None:
-        return 'deleted'
+    if value_one == '[do not exist]':
+        return 'added', value_two
+    if value_two == '[do not exist]':
+        return 'deleted', value_one
     if value_one == value_two:
-        return 'unchanged'
-    if isinstance(value_one, dict) and isinstance(value_two, dict):
-        return 'nested'
-    return 'changed'
+        return 'unchanged', value_one
+    return 'changed', (value_one, value_two)
