@@ -13,25 +13,7 @@ def load_file_content(file_name):
         'yaml': yaml.safe_load,
     }
     file_format = get_format(file_name)
-    file_content = formats_load[file_format](open(file_name))  # noqa: WPS515
-    return parse(file_content, file_format)
-
-
-def parse(file_content, file_format):
-    """Parse file content depending on it's format."""
-    converted = {}
-    for key, value in file_content.items():  # noqa: WPS110
-        if isinstance(value, dict):
-            converted.setdefault(
-                get_encoded(key, file_format),
-                parse(value, file_format),
-            )
-        else:
-            converted.setdefault(
-                get_encoded(key, file_format),
-                get_encoded(value, file_format),
-            )
-    return converted
+    return formats_load[file_format](open(file_name))  # noqa: WPS515
 
 
 def get_format(file_name):
@@ -42,16 +24,3 @@ def get_format(file_name):
         '.yml': 'yaml',
     }
     return formats[file_name[file_name.rfind('.'):]]
-
-
-def get_encoded(element, file_format):
-    """Return encoded item depending on it's format."""
-    items_to_encode = {'True', 'False', 'None'}
-    if str(element) not in items_to_encode:
-        return element
-    formats_dump = {
-        'json': json.dumps,
-        'yaml': yaml.dump,
-    }
-    convert = formats_dump[file_format]
-    return convert(element).rstrip().rstrip('...').rstrip().strip('"')
