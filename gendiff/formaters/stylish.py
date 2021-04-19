@@ -1,6 +1,9 @@
 """Contains function converting diff tree to stylish output format."""
 
 
+import json
+
+
 def stylish(diff_tree):  # noqa: WPS210
     """Generate string from diff tree."""
     diff_output = '{\n'
@@ -24,7 +27,7 @@ def get_value(keys_value, level=1):  # noqa: WPS210
             get_value(keys_value[1], level)[0]
         )
     if not isinstance(keys_value, dict):
-        return keys_value, None
+        return json.dumps(keys_value).strip('"'), None
     inner_diff = '{\n'
     for inner_key, inner_value in keys_value.items():
         current_key, status = get_key_and_status(inner_key)
