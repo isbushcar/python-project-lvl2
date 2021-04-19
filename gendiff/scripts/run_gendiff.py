@@ -33,7 +33,7 @@ FORMATTERS = {  # noqa: WPS407
 
 def main():
     """Run generate_diff with parsed arguments."""
-    generate_diff(args.first_file, args.second_file, FORMATTERS[args.format])
+    print(generate_diff(args.first_file, args.second_file, FORMATTERS[args.format]))  # noqa: WPS421, E501
 
 
 if __name__ == '__main__':

@@ -18,9 +18,7 @@ def generate_diff(first_file, second_file, formatter=stylish):
     second_file = load_file_content(second_file)
     if isinstance(formatter, str):
         formatter = FORMATTERS[formatter]
-    formatted_output = formatter(find_diff(first_file, second_file))
-    print(formatted_output)  # noqa: WPS421
-    return formatted_output
+    return formatter(find_diff(first_file, second_file))
 
 
 def find_diff(first_file, second_file):  # noqa: WPS210
