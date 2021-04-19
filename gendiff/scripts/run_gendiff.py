@@ -24,7 +24,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-FORMATERS = {  # noqa: WPS407, WPS417
+FORMATTERS = {  # noqa: WPS407, WPS417
     'stylish': stylish,
     stylish: stylish,
     'plain': plain,
@@ -36,7 +36,7 @@ FORMATERS = {  # noqa: WPS407, WPS417
 
 def main():
     """Run generate_diff with parsed arguments."""
-    generate_diff(args.first_file, args.second_file, FORMATERS[args.format])
+    generate_diff(args.first_file, args.second_file, FORMATTERS[args.format])
 
 
 if __name__ == '__main__':
