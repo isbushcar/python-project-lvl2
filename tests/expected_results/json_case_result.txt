@@ -1,7 +1,7 @@
 {
   "common": {
     "added": {
-      "follow": "false",
+      "follow": false,
       "setting4": "blah blah",
       "setting5": "[complex value]"
     },
@@ -10,8 +10,8 @@
     },
     "changed": {
       "setting3": [
-        "null",
-        "true"
+        null,
+        true
       ]
     },
     "setting6": {
