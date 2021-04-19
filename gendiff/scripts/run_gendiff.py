@@ -19,18 +19,15 @@ parser.add_argument(
     '-f',
     '--format',
     help='set format of output',
-    default=stylish,
+    default='stylish',
 )
 args = parser.parse_args()
 
 
-FORMATTERS = {  # noqa: WPS407, WPS417
+FORMATTERS = {  # noqa: WPS407
     'stylish': stylish,
-    stylish: stylish,
     'plain': plain,
-    plain: plain,
     'json': dump_json,
-    dump_json: dump_json,
 }
 
 
