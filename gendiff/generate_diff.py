@@ -2,9 +2,9 @@
 
 from uuid import uuid1
 
-from gendiff.formaters.json_output import dump_json
-from gendiff.formaters.plain import plain
-from gendiff.formaters.stylish import stylish
+from gendiff.formatters.json_output import dump_json
+from gendiff.formatters.plain import plain
+from gendiff.formatters.stylish import stylish
 from gendiff.parser import load_file_content
 
 FORMATTERS = {  # noqa: WPS407, WPS417

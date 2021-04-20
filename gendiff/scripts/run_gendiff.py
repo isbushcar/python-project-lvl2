@@ -6,9 +6,9 @@
 import argparse
 
 from gendiff import generate_diff
-from gendiff.formaters.json_output import dump_json
-from gendiff.formaters.plain import plain
-from gendiff.formaters.stylish import stylish
+from gendiff.formatters.json_output import dump_json
+from gendiff.formatters.plain import plain
+from gendiff.formatters.stylish import stylish
 
 parser = argparse.ArgumentParser(
     prog='generate diff', description='Generate diff',
