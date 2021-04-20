@@ -1,5 +1,7 @@
 """Generate diff between two json files."""
 
+from uuid import uuid1
+
 from gendiff.formaters.json_output import dump_json
 from gendiff.formaters.plain import plain
 from gendiff.formaters.stylish import stylish
@@ -10,6 +12,8 @@ FORMATTERS = {  # noqa: WPS407, WPS417
     'plain': plain,
     'json': dump_json,
 }
+
+UUID = uuid1()
 
 
 def generate_diff(first_file, second_file, formatter=stylish):
@@ -27,8 +31,8 @@ def find_diff(first_file, second_file):  # noqa: WPS210
     key_list.sort()
     diff = {}
     for key in key_list:
-        value_one = first_file.get(key, '[do not exist]')
-        value_two = second_file.get(key, '[do not exist]')
+        value_one = first_file.get(key, UUID)
+        value_two = second_file.get(key, UUID)
         if isinstance(value_one, dict) and isinstance(value_two, dict):
             diff[(key, 'nested')] = find_diff(value_one, value_two)
         else:
@@ -39,9 +43,9 @@ def find_diff(first_file, second_file):  # noqa: WPS210
 
 def get_key_status_and_value(value_one, value_two):
     """Return key status (added/deleted/changed/unchanged)."""
-    if value_one == '[do not exist]':
+    if value_one == UUID:
         return 'added', value_two
-    if value_two == '[do not exist]':
+    if value_two == UUID:
         return 'deleted', value_one
     if value_one == value_two:
         return 'unchanged', value_one
