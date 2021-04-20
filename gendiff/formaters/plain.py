@@ -4,75 +4,41 @@
 import json
 
 
-def plain(diff_tree):
+def plain(diff_tree, path=''):  # noqa: WPS210, WPS231
     """Return plain diff from diff tree."""
-    return make_plain(diff_tree).rstrip()
-
-
-def make_plain(diff_tree, path=''):  # noqa: WPS210
-    """Generate string from diff tree."""
     diff_output = ''
     for key, keys_value in diff_tree.items():
-        current_key, status = get_status_and_add_path(key, path)
+        current_key, status = key if isinstance(key, tuple) else (key, None)
+        if diff_output and status is not None and status != 'unchanged':
+            diff_output += '\n'
+        current_key = f'{path}.{current_key}' if path else current_key
         if status == 'nested':
-            diff_output += make_plain(keys_value, current_key)
+            diff_output += plain(keys_value, current_key)
             continue
-        current_value, old_value = get_value(keys_value)
+        if status == 'changed':
+            current_value = get_value(keys_value[1])
+            old_value = get_value(keys_value[0])
+            diff_output += f"Property '{current_key}' was updated. "
+            diff_output += f'From {old_value} to {current_value}'
+            continue
+        keys_value = get_value(keys_value)
         lines_template = {
             'added': f"Property '{current_key}' was added with value: "
-                     f'{current_value}\n',  # noqa: WPS318, WPS326
-            'deleted': f"Property '{current_key}' was removed\n",
+                     f'{keys_value}',  # noqa: WPS318, WPS326
+            'deleted': f"Property '{current_key}' was removed",
             'unchanged': '',
-            'changed': f"Property '{current_key}' was updated. "
-                       f'From {old_value} to {current_value}\n',  # noqa: WPS318, WPS326, E501
+            None: '',
         }
         diff_output = f'{diff_output}{lines_template[status]}'
     return diff_output
 
 
-def get_status_and_add_path(key, path=''):
-    """Add path to a key (if needed) and set unmarked keys as 'unchanged'."""
-    if path:
-        new_key = f'{path}.{key[0]}'
-        return new_key, key[1]
-    return key
-
-
-def wrap_with_quotes_and_hide_dicts(function):  # noqa: WPS231
-    """Wrap string with quotes and change dict values with [complex value]."""
-    def wrapper(keys_value):
-        func_result = function(keys_value)
-        corrected_result = []
-        for element in func_result:
-            if isinstance(element, dict):
-                corrected_result.append('[complex value]')
-                continue
-            if isinstance(element, int) or element is None:
-                corrected_result.append(element)
-                continue
-            corrected_result.append(f"'{element}'")
-        return tuple(corrected_result)
-    return wrapper
-
-
-def dump_to_json(function):
-    """Replace True/False/None with true/false/null."""
-    def wrapper(keys_value):
-        func_result = function(keys_value)
-        corrected_result = []
-        for element in func_result:
-            if element in {True, False, None}:
-                corrected_result.append(json.dumps(element).strip('"'))
-            else:
-                corrected_result.append(element)
-        return tuple(corrected_result)
-    return wrapper
-
-
-@dump_to_json
-@wrap_with_quotes_and_hide_dicts
 def get_value(keys_value):
     """Return formatted value to add to output."""
-    if isinstance(keys_value, tuple):
-        return keys_value[1], keys_value[0]
-    return keys_value, None
+    if isinstance(keys_value, dict):
+        return '[complex value]'
+    if keys_value in {True, False, None}:
+        return json.dumps(keys_value).strip('"')
+    if isinstance(keys_value, int):
+        return keys_value
+    return f"'{keys_value}'"
