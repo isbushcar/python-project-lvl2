@@ -10,16 +10,16 @@
     },
     "changed": {
       "setting3": [
-        null,
-        true
+        true,
+        null
       ]
     },
     "setting6": {
       "doge": {
         "changed": {
           "wow": [
-            "so much",
-            ""
+            "",
+            "so much"
           ]
         }
       },
@@ -31,12 +31,12 @@
   "group1": {
     "changed": {
       "baz": [
-        "bars",
-        "bas"
+        "bas",
+        "bars"
       ],
       "nest": [
-        "str",
-        "[complex value]"
+        "[complex value]",
+        "str"
       ]
     }
   },
