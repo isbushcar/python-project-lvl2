@@ -34,10 +34,13 @@ def find_diff(first_file, second_file):  # noqa: WPS210
         value_one = first_file.get(key, UUID)
         value_two = second_file.get(key, UUID)
         if isinstance(value_one, dict) and isinstance(value_two, dict):
-            diff[(key, 'nested')] = find_diff(value_one, value_two)
+            diff[key] = {
+                'status': 'nested',
+                'value': find_diff(value_one, value_two),
+            }
         else:
             status, keys_value = get_key_status_and_value(value_one, value_two)
-            diff[key, status] = keys_value
+            diff[key] = {'status': status, 'value': keys_value}
     return diff
 
 
@@ -49,4 +52,4 @@ def get_key_status_and_value(value_one, value_two):
         return 'deleted', value_one
     if value_one == value_two:
         return 'unchanged', value_one
-    return 'changed', (value_one, value_two)
+    return 'changed', {'old value': value_one, 'new value': value_two}
