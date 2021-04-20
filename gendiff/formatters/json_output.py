@@ -11,8 +11,6 @@ def dump_json(diff_tree):
 
 def adapt_to_json(diff_tree):  # noqa: WPS210, WPS231
     """Return dict adapted for json dump."""
-    if not isinstance(diff_tree, dict):
-        return diff_tree
     json_adapted = {}
     for key, keys_value in diff_tree.items():
         current_key, status = key if isinstance(key, tuple) else (key, None)
