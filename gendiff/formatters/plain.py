@@ -4,36 +4,34 @@
 import json
 
 
-def plain(diff_tree, path=''):  # noqa: WPS210, WPS231
+def plain(diff_tree, path=''):  # noqa: WPS210, WPS231, C901
     """Return plain diff from diff tree."""
     diff_output = ''
     for key, keys_value in diff_tree.items():
-        current_key, status = key if isinstance(key, tuple) else (key, None)
-        if diff_output and status is not None and status != 'unchanged':
+        if not isinstance(key, tuple) or key[1] == 'unchanged':
+            continue
+        if diff_output:
             diff_output += '\n'
+        current_key, status = key
         current_key = f'{path}.{current_key}' if path else current_key
         if status == 'nested':
             diff_output += plain(keys_value, current_key)
             continue
         if status == 'changed':
-            current_value = get_value(keys_value[1])
-            old_value = get_value(keys_value[0])
+            current_value = format_value(keys_value[1])
+            old_value = format_value(keys_value[0])
             diff_output += f"Property '{current_key}' was updated. "
             diff_output += f'From {old_value} to {current_value}'
             continue
-        keys_value = get_value(keys_value)
-        lines_template = {
-            'added': f"Property '{current_key}' was added with value: "
-                     f'{keys_value}',  # noqa: WPS318, WPS326
-            'deleted': f"Property '{current_key}' was removed",
-            'unchanged': '',
-            None: '',
-        }
-        diff_output = f'{diff_output}{lines_template[status]}'
+        current_value = format_value(keys_value)
+        if status == 'deleted':
+            diff_output += f"Property '{current_key}' was removed"
+            continue
+        diff_output += f"Property '{current_key}' was added with value: {current_value}"  # noqa: E501
     return diff_output
 
 
-def get_value(keys_value):
+def format_value(keys_value):
     """Return formatted value to add to output."""
     if isinstance(keys_value, dict):
         return '[complex value]'
