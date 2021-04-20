@@ -4,23 +4,31 @@
 import json
 
 
-def stylish(diff_tree):  # noqa: WPS210
+def stylish(diff_tree, level=0):  # noqa: WPS210
     """Generate string from diff tree."""
     diff_output = '{\n'
+    indent = '    ' * level
     for key, keys_value in diff_tree.items():
-        current_key, status = get_key_and_status(key)
-        current_value, old_value = get_value(keys_value)
-        diff_output += generate_diff_string(
-            current_key,
-            status,
-            current_value,
-            old_value,
-        )
-    diff_output += '}'  # noqa: WPS336
+        current_key, status = key if isinstance(key, tuple) else (key, None)
+        if status == 'nested':
+            inner_diff = stylish(keys_value, level + 1)
+            diff_output += f'{indent}    {current_key}: {inner_diff}\n'
+        else:
+            current_value, old_value = get_value(keys_value, level + 1)
+            lines_template = {
+                'added': f'{indent}  + {current_key}: {current_value}\n',
+                'deleted': f'{indent}  - {current_key}: {current_value}\n',
+                'unchanged': f'{indent}    {current_key}: {current_value}\n',
+                'changed': f'{indent}  - {current_key}: {current_value}\n'  # noqa: E501, WPS221
+                           f'{indent}  + {current_key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
+                None: f'{indent}    {current_key}: {current_value}\n',
+            }
+            diff_output += lines_template[status]
+    diff_output += indent + '}'
     return diff_output
 
 
-def get_value(keys_value, level=1):  # noqa: WPS210
+def get_value(keys_value, level=1):
     """Return correct values to add to diff output."""
     if isinstance(keys_value, tuple):
         return get_value(keys_value[0], level)[0], (
@@ -29,36 +37,10 @@ def get_value(keys_value, level=1):  # noqa: WPS210
     if not isinstance(keys_value, dict):
         return json.dumps(keys_value).strip('"'), None
     inner_diff = '{\n'
-    for inner_key, inner_value in keys_value.items():
-        current_key, status = get_key_and_status(inner_key)
-        current_value, old_value = get_value(inner_value, level + 1)
-        inner_diff += generate_diff_string(
-            current_key,
-            status,
-            current_value,
-            old_value,
-            level,
-        )
-    inner_diff += '    ' * level + '}'  # noqa: WPS336
-    return inner_diff, None
-
-
-def get_key_and_status(key):
-    """Return key and its status (unmarked keys get status 'unchanged'."""
-    if isinstance(key, tuple):
-        return key[0], key[1]
-    return key, 'unchanged'
-
-
-def generate_diff_string(current_key, status, current_value, old_value, level=0):  # noqa: E501
-    """Return generated diff string to add to output."""
     indent = '    ' * level
-    lines_template = {
-        'added': f'{indent}  + {current_key}: {current_value}\n',
-        'deleted': f'{indent}  - {current_key}: {current_value}\n',
-        'unchanged': f'{indent}    {current_key}: {current_value}\n',
-        'nested': f'{indent}    {current_key}: {current_value}\n',
-        'changed': f'{indent}  - {current_key}: {current_value}\n'  # noqa: E501, WPS221
-                   f'{indent}  + {current_key}: {old_value}\n',  # noqa: E501, WPS318, WPS326
-    }
-    return lines_template[status]
+    for inner_key, inner_value in keys_value.items():
+        if isinstance(inner_value, dict):
+            inner_value = get_value(inner_value, level + 1)[0]
+        inner_diff += f'{indent}    {inner_key}: {inner_value}\n'
+    inner_diff += indent + '}'
+    return inner_diff, None
