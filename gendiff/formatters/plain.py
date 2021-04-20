@@ -11,7 +11,7 @@ def plain(diff_tree, path=''):  # noqa: WPS210, WPS231, C901
         current_key, status = key if isinstance(key, tuple) else (key, None)
         current_key = f'{path}.{current_key}' if path else current_key
         if diff_output and status not in {'unchanged', None}:
-            diff_output += '\n'
+            diff_output += '\n'  # adding a new line only if needed
         if status == 'nested':
             diff_output += plain(keys_value, current_key)
         elif status == 'changed':
