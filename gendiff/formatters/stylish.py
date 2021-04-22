@@ -12,9 +12,9 @@ def stylish(diff_tree, level=0):  # noqa: WPS210, WPS231
     diff_output = '{\n'
     indent = INDENT * level
     inner_lvl = level + 1
-    for key, _ in diff_tree.items():
-        status = diff_tree[key].get('status')
-        keys_value = diff_tree[key]['value']
+    for key, inner_keys in diff_tree.items():
+        status = inner_keys.get('status')
+        keys_value = inner_keys['value']
         if status == 'nested':
             inner_diff = stylish(keys_value, inner_lvl)
             diff_output += f'{indent}{INDENT}{key}{COLON}{inner_diff}\n'
@@ -37,13 +37,13 @@ def stylish(diff_tree, level=0):  # noqa: WPS210, WPS231
 
 
 def get_formatted_value(keys_value, level=1):
-    """Return correct values to add to diff output."""
+    """Return value (as a string) to add to diff output."""
     if not isinstance(keys_value, dict):
         return json.dumps(keys_value).strip('"')
-    inner_diff = '{\n'
+    formatted_value = '{\n'
     indent = INDENT * level
     for inner_key, inner_value in keys_value.items():
         inner_value = get_formatted_value(inner_value, level + 1)
-        inner_diff += f'{indent}{INDENT}{inner_key}{COLON}{inner_value}\n'
-    inner_diff += indent + '}'
-    return inner_diff
+        formatted_value += f'{indent}{INDENT}{inner_key}{COLON}{inner_value}\n'
+    formatted_value += indent + '}'
+    return formatted_value
