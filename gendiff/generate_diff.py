@@ -16,13 +16,11 @@ FORMATTERS = {  # noqa: WPS407, WPS417
 UUID = uuid1()
 
 
-def generate_diff(first_file, second_file, formatter=stylish):
+def generate_diff(first_file, second_file, formatter='stylish'):
     """Generate diff between two files."""
     first_file = load_file_content(first_file)
     second_file = load_file_content(second_file)
-    if isinstance(formatter, str):
-        formatter = FORMATTERS[formatter]
-    return formatter(find_diff(first_file, second_file))
+    return FORMATTERS[formatter](find_diff(first_file, second_file))
 
 
 def find_diff(first_file, second_file):  # noqa: WPS210
