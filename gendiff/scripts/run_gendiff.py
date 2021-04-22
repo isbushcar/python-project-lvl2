@@ -6,34 +6,23 @@
 import argparse
 
 from gendiff import generate_diff
-from gendiff.formatters.json_output import dump_json
-from gendiff.formatters.plain import plain
-from gendiff.formatters.stylish import stylish
-
-parser = argparse.ArgumentParser(
-    prog='generate diff', description='Generate diff',
-)
-parser.add_argument('first_file')
-parser.add_argument('second_file')
-parser.add_argument(
-    '-f',
-    '--format',
-    help='set format of output',
-    default='stylish',
-)
-args = parser.parse_args()
-
-
-FORMATTERS = {  # noqa: WPS407
-    'stylish': stylish,
-    'plain': plain,
-    'json': dump_json,
-}
 
 
 def main():
     """Run generate_diff with parsed arguments."""
-    print(generate_diff(args.first_file, args.second_file, FORMATTERS[args.format]))  # noqa: WPS421, E501
+    parser = argparse.ArgumentParser(
+        prog='generate diff', description='Generate diff',
+    )
+    parser.add_argument('first_file')
+    parser.add_argument('second_file')
+    parser.add_argument(
+        '-f',
+        '--format',
+        help='set format of output',
+        default='stylish',
+    )
+    args = parser.parse_args()
+    print(generate_diff(args.first_file, args.second_file, args.format))  # noqa: WPS421, E501
 
 
 if __name__ == '__main__':
