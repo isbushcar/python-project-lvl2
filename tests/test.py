@@ -1,6 +1,5 @@
 import os
 
-
 from gendiff.generate_diff import generate_diff
 
 
@@ -9,54 +8,58 @@ def get_path(file_name, folder_name):
     return os.path.join(current_dir, folder_name, file_name)
 
 
+def open_file(file_name, folder_name):
+    return open(get_path(file_name, folder_name)).read()
+
+
 def test_simple_case():
-    simple_case_result = open(get_path('simple_case_result.txt', 'expected_results')).read()
+    expected_result = open_file('stylish_simple.txt', 'expected_results')
     json_file1 = get_path('file1.json', 'fixtures')
     json_file2 = get_path('file2.json', 'fixtures')
-    assert generate_diff(json_file1, json_file2) == simple_case_result
+    assert generate_diff(json_file1, json_file2) == expected_result
     yaml_file1 = get_path('file1.yaml', 'fixtures')
     yaml_file2 = get_path('file2.yaml', 'fixtures')
-    assert generate_diff(yaml_file1, yaml_file2) == simple_case_result
+    assert generate_diff(yaml_file1, yaml_file2) == expected_result
 
 
 def test_recursive_case():
-    recursive_case_result = open(get_path('recursive_case_result.txt', 'expected_results')).read()
-    json_recursive_file1 = get_path('recursive_file1.json', 'fixtures')
-    json_recursive_file2 = get_path('recursive_file2.json', 'fixtures')
-    assert generate_diff(json_recursive_file1, json_recursive_file2) == recursive_case_result
-    yaml_recursive_file1 = get_path('recursive_file1.yaml', 'fixtures')
-    yaml_recursive_file2 = get_path('recursive_file2.yaml', 'fixtures')
-    assert generate_diff(yaml_recursive_file1, yaml_recursive_file2) == recursive_case_result
+    expected_result = open_file('stylish_recursive.txt', 'expected_results')
+    json_file1 = get_path('recursive_file1.json', 'fixtures')
+    json_file2 = get_path('recursive_file2.json', 'fixtures')
+    assert generate_diff(json_file1, json_file2) == expected_result
+    yaml_file1 = get_path('recursive_file1.yaml', 'fixtures')
+    yaml_file2 = get_path('recursive_file2.yaml', 'fixtures')
+    assert generate_diff(yaml_file1, yaml_file2) == expected_result
 
 
 def test_plain_case():
-    plain_case_result = open(get_path('plain_case_result.txt', 'expected_results')).read()
-    json_recursive_file1 = get_path('recursive_file1.json', 'fixtures')
-    json_recursive_file2 = get_path('recursive_file2.json', 'fixtures')
-    assert generate_diff(json_recursive_file1, json_recursive_file2, 'plain') == plain_case_result
-    yaml_recursive_file1 = get_path('recursive_file1.yaml', 'fixtures')
-    yaml_recursive_file2 = get_path('recursive_file2.yaml', 'fixtures')
-    assert generate_diff(yaml_recursive_file1, yaml_recursive_file2, 'plain') == plain_case_result
+    expected_result = open_file('plain_recursive.txt', 'expected_results')
+    json_file1 = get_path('recursive_file1.json', 'fixtures')
+    json_file2 = get_path('recursive_file2.json', 'fixtures')
+    assert generate_diff(json_file1, json_file2, 'plain') == expected_result
+    yaml_file1 = get_path('recursive_file1.yaml', 'fixtures')
+    yaml_file2 = get_path('recursive_file2.yaml', 'fixtures')
+    assert generate_diff(yaml_file1, yaml_file2, 'plain') == expected_result
 
 
 def test_simple_plain_case():
-    simple_plain_case_result = open(get_path('simple_plain_case_result.txt', 'expected_results')).read()
+    expected_result = open_file('plain_simple.txt', 'expected_results')
     json_file1 = get_path('file1.json', 'fixtures')
     json_file2 = get_path('file2.json', 'fixtures')
-    assert generate_diff(json_file1, json_file2, 'plain') == simple_plain_case_result
+    assert generate_diff(json_file1, json_file2, 'plain') == expected_result
     yaml_file1 = get_path('file1.yaml', 'fixtures')
     yaml_file2 = get_path('file2.yaml', 'fixtures')
-    assert generate_diff(yaml_file1, yaml_file2, 'plain') == simple_plain_case_result
+    assert generate_diff(yaml_file1, yaml_file2, 'plain') == expected_result
 
 
 def test_json_case():
-    json_case_result = open(get_path('json_case_result.txt', 'expected_results')).read()
-    json_recursive_file1 = get_path('recursive_file1.json', 'fixtures')
-    json_recursive_file2 = get_path('recursive_file2.json', 'fixtures')
-    assert generate_diff(json_recursive_file1, json_recursive_file2, 'json') == json_case_result
-    yaml_recursive_file1 = get_path('recursive_file1.yaml', 'fixtures')
-    yaml_recursive_file2 = get_path('recursive_file2.yaml', 'fixtures')
-    assert generate_diff(yaml_recursive_file1, yaml_recursive_file2, 'json') == json_case_result
+    expected_result = open_file('json.txt', 'expected_results')
+    json_file1 = get_path('recursive_file1.json', 'fixtures')
+    json_file2 = get_path('recursive_file2.json', 'fixtures')
+    assert generate_diff(json_file1, json_file2, 'json') == expected_result
+    yaml_file1 = get_path('recursive_file1.yaml', 'fixtures')
+    yaml_file2 = get_path('recursive_file2.yaml', 'fixtures')
+    assert generate_diff(yaml_file1, yaml_file2, 'json') == expected_result
 
 
 if __name__ == '__main__':
