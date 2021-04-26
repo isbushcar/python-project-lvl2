@@ -53,17 +53,10 @@ def test_simple_plain_case():
 
 
 def test_json_case():
-    expected_result = open_file('json.txt', 'expected_results')
+    expected_result = open_file('recursive.json', 'expected_results')
     json_file1 = get_path('recursive_file1.json', 'fixtures')
     json_file2 = get_path('recursive_file2.json', 'fixtures')
     assert generate_diff(json_file1, json_file2, 'json') == expected_result
     yaml_file1 = get_path('recursive_file1.yaml', 'fixtures')
     yaml_file2 = get_path('recursive_file2.yaml', 'fixtures')
     assert generate_diff(yaml_file1, yaml_file2, 'json') == expected_result
-
-
-if __name__ == '__main__':
-    test_simple_case()
-    test_recursive_case()
-    test_plain_case()
-    test_json_case()
