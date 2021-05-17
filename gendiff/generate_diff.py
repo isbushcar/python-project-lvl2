@@ -15,6 +15,13 @@ FORMATTERS = {  # noqa: WPS407, WPS417
 
 def generate_diff(first_file, second_file, formatter='stylish'):
     """Generate diff between two files."""
-    first_file = load_file_content(first_file)
-    second_file = load_file_content(second_file)
+    first_file = load_file_content(first_file, get_file_format(first_file))
+    second_file = load_file_content(second_file, get_file_format(second_file))
     return FORMATTERS[formatter](find_diff(first_file, second_file))
+
+
+def get_file_format(file_name):
+    format_index = file_name.rfind('.')
+    if format_index == -1:
+        return 'unknown format'
+    return file_name[format_index + 1:]
