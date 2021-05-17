@@ -24,6 +24,8 @@ def generate_diff(first_file, second_file, formatter=STYLISH):
 
 
 def get_file_format(file_name):
-    """Return file format."""
+    """Return file format or 'unknown format' in can't get it."""
     format_index = file_name.rfind('.')
+    if format_index == -1:
+        return 'unknown format'
     return file_name[format_index + 1:]
