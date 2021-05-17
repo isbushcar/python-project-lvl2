@@ -5,7 +5,7 @@
 
 import argparse
 
-from gendiff import generate_diff
+from gendiff import STYLISH, generate_diff
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
         '-f',
         '--format',
         help='set format of output',
-        default='stylish',
+        default=STYLISH,
     )
     args = parser.parse_args()
     print(generate_diff(args.first_file, args.second_file, args.format))  # noqa: WPS421, E501

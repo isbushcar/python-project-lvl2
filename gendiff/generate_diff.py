@@ -6,14 +6,17 @@ from gendiff.formatters.plain import plain
 from gendiff.formatters.stylish import stylish
 from gendiff.parser import load_file_content
 
+STYLISH = 'stylish'
+PLAIN = 'plain'
+JSON = 'json'
 FORMATTERS = {  # noqa: WPS407, WPS417
-    'stylish': stylish,
-    'plain': plain,
-    'json': dump_json,
+    STYLISH: stylish,
+    PLAIN: plain,
+    JSON: dump_json,
 }
 
 
-def generate_diff(first_file, second_file, formatter='stylish'):
+def generate_diff(first_file, second_file, formatter=STYLISH):
     """Generate diff between two files."""
     first_file = load_file_content(first_file, get_file_format(first_file))
     second_file = load_file_content(second_file, get_file_format(second_file))
@@ -21,6 +24,7 @@ def generate_diff(first_file, second_file, formatter='stylish'):
 
 
 def get_file_format(file_name):
+    """Return file format or 'unknown format' in can't get it."""
     format_index = file_name.rfind('.')
     if format_index == -1:
         return 'unknown format'
