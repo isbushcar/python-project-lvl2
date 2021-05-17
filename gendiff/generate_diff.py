@@ -1,4 +1,4 @@
-"""Generate diff between two json files."""
+"""Generate diff between two .json or .yaml files."""
 
 from gendiff import find_diff
 from gendiff.formatters.json_output import dump_json
