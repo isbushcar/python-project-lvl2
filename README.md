@@ -18,7 +18,7 @@ Could be used as python package or command-line utility.
 
 Available options:
 
-`-f, --format` [type] Output format: stylish (default), plain or json
+`-f, --format [type]` Output format: stylish (default), plain or json
 
 `-h, --help` output usage information
 ## Examples
